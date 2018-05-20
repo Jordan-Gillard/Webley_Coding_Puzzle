@@ -4,16 +4,16 @@ import csv
 import itertools
 import sys
 from pprint import pprint #delete this later
+from time import sleep
 
-parser = argparse.ArgumentParser(description="Webley Coding Puzzle. Give a value and find combinations of menu items that equal that value.")
-parser.add_argument("-csv", type=str, nargs='*', default = '', help="csv(s) to parse.")
-args = parser.parse_args()
 
-if not args.csv:
-    while not os.path.isfile(args.csv):
-        args.csv = input("Please enter the name of the csv to use. To exit, enter 'quit'.\n")
-        if args.csv.lower() == 'quit':
-            sys.exit()
+def check_if_csv_given(args):
+    if not args.csv:
+        while not os.path.isfile(args.csv):
+            args.csv = input("Please enter the name of the csv to use. Please enter only one csv file at a time. To exit, enter 'quit'.\n")
+            if "quit" in args.csv or "Quit" in args.csv:
+                sys.exit()
+        args.csv = [args.csv]
 
 def check_that_csv_file_exists(file):
     if os.path.isfile(file):
@@ -58,9 +58,14 @@ def check_if_row_is_good(row):
         return False
     elif len(row) != 2: #skips improperly formatted rows.
         return False
+    try:
+        float(row[1].replace('$', ''))
+    except:
+        print('Skipping row: "{}, {}" because price is improperly formatted.'.format(*row))
+        return False
     return True
     
-def check_if_there_are_combos_that_match_price(combinations, target_price, foods):
+def check_if_there_are_combos_that_match_price(combinations, target_price_string, foods):
     if combinations:
         for combination in combinations:
             message_to_user = ""
@@ -77,34 +82,45 @@ def check_if_there_are_combos_that_match_price(combinations, target_price, foods
             print(message_to_user)
             return
     print("There are no combinations of menu items that match the target price.")
-    
-for file in args.csv:
-    if check_csv_file_is_good(file):
-        with open(file, 'r') as f:
-            reader = csv.reader(f)
-            target_price_row = next(reader)
-            target_price_string = get_target_price(target_price_row)
-            foods = []
-            prices = []
-            
-            for row in reader:
-                if check_if_row_is_good(row):
-                    food = row[0]
-                    price = float(row[1].replace('$', '')) # $4 => 4.00
-                    foods.append(food)
-                    prices.append(price)
-                    
-            enumerated_prices_list = list(enumerate(prices))
-            all_possible_combinations_of_prices = [combo for i in range(len(enumerated_prices_list), 0, -1) for combo in itertools.combinations(enumerated_prices_list, i)]
-            combinations_that_match_target_price = []
-            
-            for combination in all_possible_combinations_of_prices:
-                total_price = 0
-                for price in combination:
-                    total_price += price[1]
-                total_price_string = "${0:.2f}".format(total_price)
-                if total_price_string == target_price_string:
-                    combinations_that_match_target_price.append(combination)
-                    
-            check_if_there_are_combos_that_match_price(combinations_that_match_target_price, target_price_string, foods)
+
+def run(args):
+    for file in args.csv:
+        print("\nRunning {}...".format(file))
+        if check_csv_file_is_good(file):
+            with open(file, 'r') as f:
+                reader = csv.reader(f)
+                target_price_row = next(reader)
+                target_price_string = get_target_price(target_price_row)
+                # print("Checking {} for combinations that equal {}".format(file, target_price_string))
+                foods = []
+                prices = []
+                
+                for row in reader:
+                    if check_if_row_is_good(row):
+                        food = row[0]
+                        price = float(row[1].replace('$', '')) # $4 => 4.00
+                        foods.append(food)
+                        prices.append(price)
+                        
+                enumerated_prices_list = list(enumerate(prices))
+                all_possible_combinations_of_prices = [combo for i in range(len(enumerated_prices_list), 0, -1) for combo in itertools.combinations(enumerated_prices_list, i)]
+                combinations_that_match_target_price = []
+                
+                for combination in all_possible_combinations_of_prices:
+                    total_price = 0
+                    for price in combination:
+                        total_price += price[1]
+                    total_price_string = "${0:.2f}".format(total_price)
+                    if total_price_string == target_price_string:
+                        combinations_that_match_target_price.append(combination)
+                        
+                check_if_there_are_combos_that_match_price(combinations_that_match_target_price, target_price_string, foods)
         
+        
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Webley Coding Puzzle. Give a value and find combinations of menu items that equal that value.")
+    parser.add_argument("-csv", type=str, nargs='*', default = '', help="csv(s) to parse.")
+    args = parser.parse_args()
+    
+    check_if_csv_given(args)
+    run(args)
