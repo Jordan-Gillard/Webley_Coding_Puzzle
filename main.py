@@ -18,12 +18,8 @@ def check_if_csv_given(args):
         if isinstance(args.csv, list): #if user typed -csv but didn't specify anything after
             print("Please enter a csv file after using '-csv'.")
             args.csv = get_csv_file_from_user()
-            # sys.exit()
         while not os.path.isfile(args.csv):
             args.csv = get_csv_file_from_user()
-            # args.csv = input("Please enter the name of the csv to use. Please enter only one csv file at a time. To exit, enter 'quit'.\n")
-            # if "quit" in args.csv or "Quit" in args.csv:
-            #     sys.exit()
         args.csv = [args.csv]
 
 def check_that_csv_file_exists(file):
@@ -54,7 +50,7 @@ def check_csv_file_is_good(file):
         try:
             float(target_value[1:])
         except ValueError: 
-            print('The target value must be a valid floating point number or integer, i.e. "$4.50" or "$4".')
+            print('The target value must be a valid floating point number or integer after the "$" sign, i.e. "$4.50" or "$4".')
             return False
         for row in reader:
             if len(row) != 2 and len(row) != 0:
@@ -94,7 +90,7 @@ def check_if_there_are_combos_that_match_price(combinations, target_price_string
                     message_to_user += ' '
             message_to_user += "is equal to the target price of {}.".format(target_price_string)
             print(message_to_user)
-    else:        # return
+    else:
         print("There are no combinations of menu items that match the target price.")
 
 def run(args):
