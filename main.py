@@ -29,6 +29,9 @@ def check_csv_file_is_good(file):
     with open(file, 'r') as f:
         reader = csv.reader(f)
         target_price_row = next(reader)
+        if not target_price_row: #checks if the first row is empty
+            print('Please check csv file to make sure that the first row is in the format: "target price, value".')
+            return False
         if target_price_row[0].lower() != "target price": #checks if the header row has the target price and not a menu item
             print('File header is not properly formatted. The first element of the first row should be "Target price".')
             return False
