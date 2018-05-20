@@ -1,8 +1,7 @@
 # Webley Coding Puzzle
 
 ### About
-This script parses one or multiple csv files. In order for it to properly work, the first line must be in the format "Target price,value", i.e. `Target price, $15.05`. The following rows should be in the format "menu item, price", i.e. `mixed fruit,$2.15`. The script checks all combinations of menu items to see if they add up to the target price. If they do, then that result is printed out to the user. If no combinations exist, the script prints that to the user as well.  
-&nbsp;&nbsp;&nbsp;&nbsp;
+This script parses one or multiple csv files. In order for it to properly work, the first line of each csv file must be in the format "Target price,value", i.e. `Target price, $15.05`. The following rows should be in the format "menu item, price", i.e. `mixed fruit,$2.15`. The script checks all combinations of menu items to see if they add up to the target price. If they do, then that result is printed out to the user. If no combinations exist, the script prints that to the user as well.  
 
 ### How to use
 There are two ways to use this:  
