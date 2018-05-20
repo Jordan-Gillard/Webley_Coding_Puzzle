@@ -8,4 +8,4 @@ There are two ways to use this:
 &nbsp;&nbsp;&nbsp;&nbsp;1. You can simply type on the command line `python main.py` to get started. This route will prompt you to enter a file.  
 &nbsp;&nbsp;&nbsp;&nbsp;2. or you can specify one, or multiple, csv files by typing on the command line `python main.py -csv file_1.csv file_2.csv`
   
-Please note that if you want to enter multiple files, you have to use `-csv` on the command line.
+Please note that if you want to enter multiple files, you have to use `-csv` on the command line. Also note that this script is both Python 2 and Python 3 compatible.
