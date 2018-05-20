@@ -3,16 +3,27 @@ import os
 import csv
 import itertools
 import sys
-from pprint import pprint #delete this later
-from time import sleep
 
 
 def check_if_csv_given(args):
+    "checks if the user gave a csv file or if script should ask the user for one."
+    
+    def get_csv_file_from_user():
+        args.csv = input("Please enter the name of the csv to use. Please enter only one csv file at a time. To exit, enter 'quit'.\n")
+        if "quit" in args.csv or "Quit" in args.csv:
+            sys.exit()
+        return args.csv
+        
     if not args.csv:
+        if isinstance(args.csv, list): #if user typed -csv but didn't specify anything after
+            print("Please enter a csv file after using '-csv'.")
+            args.csv = get_csv_file_from_user()
+            # sys.exit()
         while not os.path.isfile(args.csv):
-            args.csv = input("Please enter the name of the csv to use. Please enter only one csv file at a time. To exit, enter 'quit'.\n")
-            if "quit" in args.csv or "Quit" in args.csv:
-                sys.exit()
+            args.csv = get_csv_file_from_user()
+            # args.csv = input("Please enter the name of the csv to use. Please enter only one csv file at a time. To exit, enter 'quit'.\n")
+            # if "quit" in args.csv or "Quit" in args.csv:
+            #     sys.exit()
         args.csv = [args.csv]
 
 def check_that_csv_file_exists(file):
@@ -39,7 +50,7 @@ def check_csv_file_is_good(file):
         if target_value[0] != '$':
             print('The value for the target price must begin with "$".')
             return False
-        #check if target value is valid
+        #check if target value converts to a valid floating point number
         try:
             float(target_value[1:])
         except ValueError: 
@@ -83,18 +94,17 @@ def check_if_there_are_combos_that_match_price(combinations, target_price_string
                     message_to_user += ' '
             message_to_user += "is equal to the target price of {}.".format(target_price_string)
             print(message_to_user)
-            return
-    print("There are no combinations of menu items that match the target price.")
+    else:        # return
+        print("There are no combinations of menu items that match the target price.")
 
 def run(args):
     for file in args.csv:
-        print("\nRunning {}...".format(file))
+        print("Running {}...".format(file))
         if check_csv_file_is_good(file):
             with open(file, 'r') as f:
                 reader = csv.reader(f)
                 target_price_row = next(reader)
                 target_price_string = get_target_price(target_price_row)
-                # print("Checking {} for combinations that equal {}".format(file, target_price_string))
                 foods = []
                 prices = []
                 
@@ -118,6 +128,7 @@ def run(args):
                         combinations_that_match_target_price.append(combination)
                         
                 check_if_there_are_combos_that_match_price(combinations_that_match_target_price, target_price_string, foods)
+        print('\n')
         
         
 if __name__ == '__main__':
